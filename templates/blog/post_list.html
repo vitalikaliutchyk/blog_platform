@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  {% for post in posts %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>{{ post.title }}</h5>
+      <p class="text-muted">
+        Автор: {{ post.author.username }} |
+        Просмотров: {{ post.views }} |
+        Лайков: <span id="likes-{{ post.id }}">{{ post.likes.count }}</span>
+      </p>
+      <p>{{ post.content }}</p>
+
+      <!-- Комментарии -->
+      <div class="mt-4">
+        <h6>Комментарии ({{ post.comments.count }}):</h6>
+        {% for comment in post.comments.all %}
+          <div class="card mb-2 comment-card">
+            <div class="card-body p-2">
+              <small class="text-muted">
+                {{ comment.author.username }} - {{ comment.created_at|date:"d M Y H:i" }}
+              </small>
+              <p class="mb-0">{{ comment.text }}</p>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">Пока нет комментариев</p>
+        {% endfor %}
+      </div>
+
+      <button
+          onclick="likePost({{ post.id }})"
+          class="btn btn-sm {% if request.user in post.likes.all %}btn-danger{% else %}btn-outline-primary{% endif %} mt-2"
+          id="like-btn-{{ post.id }}">
+          ❤️ Лайк
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+function likePost(postId) {
+    const url = `/api/posts/${postId}/like/`;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const likeBtn = document.getElementById(`like-btn-${postId}`);
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    })
+    .then(response => {
+        if (response.status === 401) {
+            window.location.href = '/admin/login/?next=/';
+            return Promise.reject('Unauthorized');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data) {
+            // Обновляем счетчик
+            document.getElementById(`likes-${postId}`).textContent = data.likes;
+
+            // Меняем стиль кнопки
+            if (data.liked) {
+                likeBtn.classList.remove('btn-outline-primary');
+                likeBtn.classList.add('btn-danger');
+            } else {
+                likeBtn.classList.remove('btn-danger');
+                likeBtn.classList.add('btn-outline-primary');
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}
