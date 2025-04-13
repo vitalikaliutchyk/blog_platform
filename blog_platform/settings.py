@@ -119,6 +119,18 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+VIEWS_COUNTER_REDIS_KEY = "post_views:{post_id}"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
