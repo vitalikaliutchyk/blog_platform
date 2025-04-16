@@ -5,11 +5,11 @@ from blog.models import Post, Comment, Tag
 class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'created_at', 'views')
     search_fields = ('title', 'content')
-    list_filter = ('tags', 'author')
+    list_filter = ('tags', 'author', 'created_at')
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('post', 'author', 'created_at', 'is_approved')
+    list_display = ('post', 'author', 'created_at')
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
