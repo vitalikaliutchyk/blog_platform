@@ -1,9 +1,10 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
+from django.http import JsonResponse
 from rest_framework.response import Response
 from blog.models import Post, Comment
 from api.serializers import PostSerializer, CommentSerializer
-
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -32,10 +33,9 @@ class PostViewSet(viewsets.ModelViewSet):
             liked = True
 
         return Response({
-            'likes': post.likes.count(),
+            'likes_count': post.likes.count(),  # Единообразное имя поля
             'liked': liked
         })
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()

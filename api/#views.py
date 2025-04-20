@@ -12,9 +12,6 @@ class PostViewSet(viewsets.ModelViewSet):
         post = self.get_object()
         user = request.user
 
-        if not user.is_authenticated:
-            return Response({"error": "Авторизация требуется"}, status=status.HTTP_401_UNAUTHORIZED)
-
         if post.likes.filter(id=user.id).exists():
             post.likes.remove(user)
             liked = False
