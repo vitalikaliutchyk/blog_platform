@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000  # Используем встроенный сервер Django
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"  # Открываем порт напрямую
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://bloguser:blogpass@db:5432/blogdb
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=blogdb
+      - POSTGRES_USER=bloguser
+      - POSTGRES_PASSWORD=blogpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
