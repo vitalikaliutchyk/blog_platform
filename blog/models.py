@@ -11,6 +11,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.ManyToManyField(get_user_model(),related_name='liked_posts',blank=True)
     tags = models.ManyToManyField('Tag', blank=True)
+    image = models.ImageField(upload_to='post_images/', blank=True, null=True)  # Новое поле
 
     def __str__(self):
         return self.title
